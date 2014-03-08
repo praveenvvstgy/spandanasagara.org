@@ -7,9 +7,9 @@ var NATIVE = window.NATIVE || {};
 ================================================== */
 	NATIVE.ContactForm = function(){
 		$('.contact-form').each(function(){
-				var formInstance = $(this);
-				formInstance.submit(function(){
-			
+			var formInstance = $(this);
+			formInstance.submit(function(){
+		
 				var action = $(this).attr('action');
 			
 				$("#message").slideUp(750,function() {
@@ -18,38 +18,28 @@ var NATIVE = window.NATIVE || {};
 					$('#submit')
 						.after('<img src="images/loader.gif" class="loader" />')
 						.attr('disabled','disabled');
-				
-						// $.post(action, {
-						// 	name: $('#name').val(),
-						// 	email: $('#email').val(),
-						// 	phone: $('#phone').val(),
-						// 	comments: $('#comments').val()
-						// },
-						// 	function(data){
-						// 		document.getElementById('message').innerHTML = data;
-						// 		$('#message').slideDown('slow');
-						// 		$('.contact-form img.loader').fadeOut('slow',function(){$(this).remove()});
-						// 		$('#submit').removeAttr('disabled');
-						// 		if(data.match('success') != null) $('.contact-form').slideUp('slow');
-					
-						// 	}
-						// );
-
 						$.ajax({
+							url: action,
 							dataType: 'jsonp',
-							url: "http://spandanasagara.ap01.aws.af.cm/",
 							data: {
 								name: $('#name').val(),
 								email: $('#email').val(),
 								phone: $('#phone').val(),
 								comments: $('#comments').val(),
+							},
+						}).done(function(data) {
+							document.getElementById('message').innerHTML = data.success;
+							if (data.success.match('success') == null) {
+								document.getElementById('message').innerHTML = data.success;
 							}
-						}).done(function() {
-							document.getElementById('message').innerHTML = "Form successfully submitted!";
+							if (data.success.match('success') != null) {
+								document.getElementById('message').innerHTML = data.success;
+								$('.contact-form').slideUp('slow');
+							}
 							$('#message').slideDown('slow');
 							$('.contact-form img.loader').fadeOut('slow',function(){$(this).remove()});
 							$('#submit').removeAttr('disabled');
-							$('.contact-form').slideUp('slow');
+							console.log(data);
 						});
 
 
